@@ -1,3 +1,357 @@
-<p>Hello everyone<p>
-<p>Welcome to my personal website<p>
-<p>you can find me by these way<p>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生物医学AI前沿 - BioAI Frontier</title>
+    <style>
+        /* 全局重置与基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+        body {
+            color: #333;
+            line-height: 1.6;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏 */
+        nav {
+            background-color: #2d3e4f;
+            color: #fff;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        .nav-menu li:hover {
+            color: #3498db;
+            transition: color 0.3s;
+        }
+
+        /* 首页Banner */
+        .banner {
+            height: 500px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .banner h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .banner p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background-color: #fff;
+            color: #3498db;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* 研究方向板块 */
+        .section {
+            padding: 80px 0;
+        }
+        .section-title {
+            font-size: 32px;
+            color: #2d3e4f;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: #3498db;
+            margin: 15px auto 0;
+        }
+        .research-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        .card-icon {
+            font-size: 40px;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 22px;
+            color: #2d3e4f;
+            margin-bottom: 15px;
+        }
+        .card-desc {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* 工具资源板块 */
+        .tools-section {
+            background-color: #f8f9fa;
+        }
+        .tools-list {
+            max-width: 800px;
+            margin: 0 auto;
+            list-style: none;
+        }
+        .tools-item {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .tools-icon {
+            font-size: 24px;
+            color: #3498db;
+            margin-top: 3px;
+        }
+        .tools-info h4 {
+            font-size: 18px;
+            color: #2d3e4f;
+            margin-bottom: 5px;
+        }
+        .tools-info p {
+            color: #666;
+        }
+
+        /* 关于我们板块 */
+        .about-section {
+            text-align: center;
+        }
+        .about-desc {
+            max-width: 900px;
+            margin: 0 auto 40px;
+            font-size: 18px;
+            color: #555;
+            line-height: 1.8;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 30px;
+            color: #2d3e4f;
+            font-size: 16px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .contact-icon {
+            font-size: 20px;
+            color: #3498db;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: #2d3e4f;
+            color: #fff;
+            text-align: center;
+            padding: 30px 0;
+            font-size: 14px;
+        }
+
+        /* 响应式适配（手机/平板） */
+        @media (max-width: 768px) {
+            .banner h1 {
+                font-size: 36px;
+            }
+            .banner p {
+                font-size: 18px;
+            }
+            .nav-menu {
+                gap: 20px;
+            }
+            .section {
+                padding: 60px 0;
+            }
+            .section-title {
+                font-size: 28px;
+            }
+            .contact-info {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .banner {
+                height: 400px;
+            }
+            .banner h1 {
+                font-size: 28px;
+            }
+            .research-cards {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">BioAI Frontier</div>
+            <ul class="nav-menu">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#research">研究方向</a></li>
+                <li><a href="#tools">工具资源</a></li>
+                <li><a href="#about">关于我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 首页Banner -->
+    <section id="home" class="banner">
+        <div class="container">
+            <h1>生物医学 × 人工智能</h1>
+            <p>用前沿AI技术解锁生命科学的未知领域</p>
+            <a href="#research" class="btn">探索研究成果</a>
+        </div>
+    </section>
+
+    <!-- 研究方向板块 -->
+    <section id="research" class="section">
+        <div class="container">
+            <h2 class="section-title">我们的研究方向</h2>
+            <div class="research-cards">
+                <div class="card">
+                    <div class="card-icon">📚</div>
+                    <h3 class="card-title">LLM 生物医学文献分析</h3>
+                    <p class="card-desc">基于大语言模型，高效处理、总结和挖掘海量生物医学文献数据，自动提取核心结论与关联信息，加速科研成果转化。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧬</div>
+                    <h3 class="card-title">免疫组学AI预测</h3>
+                    <p class="card-desc">利用机器学习算法构建免疫细胞图谱模型，精准识别疾病相关免疫标志物，辅助临床诊断与个性化治疗方案优化。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔬</div>
+                    <h3 class="card-title">细胞生物学模拟</h3>
+                    <p class="card-desc">通过深度学习模拟细胞活动机制与分子相互作用，为药物靶点预测、药效评估提供精准计算支持，缩短药物研发周期。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 工具资源板块 -->
+    <section id="tools" class="section tools-section">
+        <div class="container">
+            <h2 class="section-title">实用工具资源</h2>
+            <ul class="tools-list">
+                <li class="tools-item">
+                    <div class="tools-icon">📖</div>
+                    <div class="tools-info">
+                        <h4>生物医学LLM微调指南</h4>
+                        <p>针对生物医学专业数据集的大模型微调教程，包含数据预处理、模型训练、效果评估全流程操作手册。</p>
+                    </div>
+                </li>
+                <li class="tools-item">
+                    <div class="tools-icon">🔧</div>
+                    <div class="tools-info">
+                        <h4>文献批量处理脚本</h4>
+                        <p>自动化提取PubMed/CNKI等数据库文献的标题、摘要、关键词等关键信息，支持导出为Excel/CSV格式。</p>
+                    </div>
+                </li>
+                <li class="tools-item">
+                    <div class="tools-icon">📊</div>
+                    <div class="tools-info">
+                        <h4>免疫数据分析模板</h4>
+                        <p>适配10x Genomics、Smart-seq2等主流测序数据的可视化模板，支持细胞聚类、差异基因分析结果快速呈现。</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 关于我们板块 -->
+    <section id="about" class="section about-section">
+        <div class="container">
+            <h2 class="section-title">关于我们</h2>
+            <div class="about-desc">
+                <p>我们是一支由生物医学研究人员、AI算法工程师、数据科学家组成的交叉学科团队，专注于人工智能在生命科学领域的应用研究与技术落地。</p>
+                <p>团队核心成员来自国内外顶尖高校与科研机构，拥有丰富的生物医学研究经验与AI技术研发能力，致力于搭建科研人员与技术开发者的高效交流平台，推动生物医学AI技术的创新与产业化应用。</p>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <span>contact@bioaifrontier.com</span>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">💻</div>
+                    <span>github.com/bioaifrontier</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2025 BioAI Frontier 版权所有 | 生物医学AI交叉研究平台</p>
+        </div>
+    </footer>
+</body>
+</html>
