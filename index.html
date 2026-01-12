@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HappyLab</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">HappyLab</div>
+        <nav class="nav" aria-label="主导航">
+          <a href="#about">关于我们</a>
+          <a href="#publications">发表文章</a>
+          <a href="#research">研究方向</a>
+          <a href="#people">团队</a>
+          <a href="#contact">联系</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="欢迎">
+      <div class="container hero-content">
+        <h1>欢迎来到 "HappyLab"</h1>
+        <p>专注领域研究与高质量学术产出，分享已发表文章与实验室动态。</p>
+        <a class="btn" href="#publications">查看已发表文章</a>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <h2>关于我们</h2>
+        <p>
+          在这里简要介绍实验室定位、研究方向、所在机构及研究愿景。替换为你自己的信息即可。
+        </p>
+      </div>
+    </section>
+
+    <section id="publications" class="section">
+      <div class="container">
+        <h2>已发表文章</h2>
+        <div class="pub-controls">
+          <input
+            type="text"
+            id="pub-search"
+            placeholder="按题名、作者、期刊等检索"
+          />
+          <select id="pub-year">
+            <option value="all">全部年份</option>
+          </select>
+        </div>
+        <div id="pub-list" class="pub-list"></div>
+      </div>
+    </section>
+
+    <section id="research" class="section">
+      <div class="container">
+        <h2>研究方向</h2>
+        <ul class="grid-3">
+          <li>方向一：简要描述研究主题和应用领域。</li>
+          <li>方向二：多学科融合与方法创新。</li>
+          <li>方向三：与产业应用的衔接与转化。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="people" class="section">
+      <div class="container">
+        <h2>核心成员</h2>
+        <div class="grid-people">
+          <div class="card">PI/主持人信息</div>
+          <div class="card">研究员/博士后</div>
+          <div class="card">研究生/合作成员</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>联系</h2>
+        <form class="contact-form" onsubmit="return false;">
+          <input type="text" placeholder="您的姓名" required />
+          <input type="email" placeholder="邮箱" required />
+          <textarea placeholder="留言内容" required></textarea>
+          <button type="submit" class="btn">发送</button>
+        </form>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container">© 2026 实验室名. 保留所有权利。</div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
