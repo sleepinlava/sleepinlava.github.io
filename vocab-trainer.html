@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>医学英语词汇训练</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #1a2332;
+  --text-light: #5a6d80;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --green: #059669;
+  --green-light: #d1fae5;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --border: #e2e8f0;
+  --shadow: 0 4px 24px rgba(0,0,0,.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 20px; }
+
+.header { text-align: center; }
+.header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+.header .subtitle { font-size: .85rem; color: var(--text-light); margin-top: 2px; }
+
+.filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.filter-bar label { font-size: .85rem; color: var(--text-light); white-space: nowrap; }
+.filter-bar select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: .85rem; background: var(--card); color: var(--text); cursor: pointer; }
+
+.tabs { display: flex; background: var(--card); border-radius: var(--radius); padding: 4px; box-shadow: var(--shadow); }
+.tab { flex: 1; padding: 10px 8px; text-align: center; border: none; background: transparent; border-radius: var(--radius-sm); cursor: pointer; font-size: .85rem; font-weight: 500; color: var(--text-light); transition: all .2s; }
+.tab.active { background: var(--accent); color: #fff; }
+.tab:hover:not(.active) { background: var(--accent-light); }
+
+.stats { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.stat { background: var(--card); border-radius: var(--radius-sm); padding: 10px 18px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.04); min-width: 60px; }
+.stat .num { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+.stat .label { font-size: .7rem; color: var(--text-light); margin-top: 2px; }
+
+/* Card */
+.card-box { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 40px 24px; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+.card-box.clickable { cursor: pointer; user-select: none; }
+.card-box.clickable:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.12); }
+
+.card-tag { position: absolute; top: 14px; left: 18px; font-size: .7rem; color: var(--text-light); background: var(--bg); padding: 3px 10px; border-radius: 20px; }
+
+.word-big { font-size: 2rem; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.word-pos { font-size: .85rem; color: var(--text-light); margin-top: 6px; font-style: italic; }
+.word-meaning { font-size: 1.3rem; color: var(--accent); margin-top: 16px; font-weight: 600; }
+.word-hint { font-size: .8rem; color: var(--text-light); margin-top: 12px; }
+.word-count { font-size: .75rem; color: var(--text-light); margin-top: 4px; }
+
+/* Actions */
+.actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 12px 28px; border: none; border-radius: var(--radius-sm); font-size: .95rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+.btn:active { transform: scale(.96); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-success { background: var(--green); color: #fff; }
+.btn-success:hover { background: #047857; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-danger:hover { background: #b91c1c; }
+.btn-ghost { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+/* Fill-blank */
+.fill-row { display: flex; gap: 8px; width: 100%; max-width: 400px; }
+.fill-input { flex: 1; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-size: 1.1rem; font-family: inherit; outline: none; transition: border-color .2s; }
+.fill-input:focus { border-color: var(--accent); }
+.fill-input.correct { border-color: var(--green); background: var(--green-light); }
+.fill-input.wrong { border-color: var(--red); background: var(--red-light); }
+
+/* Options grid */
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 20px; }
+.option-btn { padding: 16px 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--card); font-size: 1rem; cursor: pointer; transition: all .15s; text-align: center; font-family: inherit; color: var(--text); }
+.option-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.option-btn.correct { border-color: var(--green); background: var(--green-light); color: var(--green); font-weight: 700; }
+.option-btn.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); }
+.option-btn:disabled { cursor: default; }
+.option-btn:disabled:hover { border-color: var(--border); background: var(--card); }
+.option-btn:disabled.correct:hover { border-color: var(--green); background: var(--green-light); }
+.option-btn:disabled.wrong:hover { border-color: var(--red); background: var(--red-light); }
+
+.feedback { font-size: 1rem; font-weight: 600; min-height: 28px; margin-top: 16px; transition: all .2s; }
+.feedback.ok { color: var(--green); }
+.feedback.bad { color: var(--red); }
+
+.toggle-row { display: flex; align-items: center; gap: 8px; justify-content: center; font-size: .85rem; color: var(--text-light); }
+.toggle-row input { accent-color: var(--accent); }
+
+.kbd-hint { font-size: .75rem; color: var(--text-light); text-align: center; margin-top: 8px; }
+.kbd { display: inline-block; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: .7rem; font-family: monospace; }
+
+@media (max-width: 480px) {
+  .app { gap: 14px; }
+  .card-box { padding: 28px 16px; min-height: 240px; }
+  .word-big { font-size: 1.5rem; }
+  .word-meaning { font-size: 1.1rem; }
+  .options-grid { grid-template-columns: 1fr; gap: 8px; }
+  .option-btn { padding: 14px 10px; font-size: .9rem; }
+  .tab { font-size: .75rem; padding: 8px 4px; }
+  .btn { padding: 10px 20px; font-size: .85rem; }
+}
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeInUp .35s ease both; }
+
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+.shake { animation: shake .4s ease; }
+
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+.pop { animation: pop .3s ease; }
+
+.done-icon { font-size: 3rem; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Medical English Vocab Trainer</h1>
+    <div class="subtitle" id="subtitle">医学英语词汇训练 · 加载中...</div>
+  </div>
+
+  <div class="filter-bar">
+    <label for="unitSelect">单元:</label>
+    <select id="unitSelect"><option value="all">All Units</option></select>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-mode="flashcard"> 单词卡片</button>
+    <button class="tab" data-mode="fillblank"> 单词补写</button>
+    <button class="tab" data-mode="baicizhan"> 百词斩式</button>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="num" id="statTotal">0</div><div class="label">本轮</div></div>
+    <div class="stat"><div class="num" id="statCorrect">0</div><div class="label">正确</div></div>
+    <div class="stat"><div class="num" id="statStreak">0</div><div class="label">连击</div></div>
+    <div class="stat"><div class="num" id="statAccuracy">-</div><div class="label">正确率</div></div>
+  </div>
+
+  <!-- ====== Flashcard Mode ====== -->
+  <div id="modeFlashcard">
+    <div class="toggle-row" style="margin-bottom:10px">
+      <input type="checkbox" id="fcShuffle" checked><label for="fcShuffle">随机顺序</label>
+    </div>
+    <div class="card-box clickable fade-in" id="fcCard">
+      <div class="card-tag" id="fcTag"></div>
+      <div class="word-big" id="fcWord"></div>
+      <div class="word-pos" id="fcPos"></div>
+      <div class="word-meaning" id="fcMeaning"></div>
+      <div class="word-hint" id="fcHint">点击卡片翻转</div>
+    </div>
+    <div class="actions" id="fcActions" style="margin-top:16px">
+      <button class="btn btn-danger" id="fcBtnNo"> 不认识</button>
+      <button class="btn btn-success" id="fcBtnYes"> 认识</button>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-ghost" id="fcResetBtn"> 重新开始</button>
+    </div>
+    <div class="kbd-hint">
+      按 <span class="kbd">Space</span> 翻转  <span class="kbd">&larr;</span> 不认识  <span class="kbd">&rarr;</span> 认识
+    </div>
+  </div>
+
+  <!-- ====== Fill-in-Blank Mode ====== -->
+  <div id="modeFillblank" style="display:none">
+    <div class="toggle-row" style="margin-bottom:10px">
+      <input type="checkbox" id="fbShuffle" checked><label for="fbShuffle">随机顺序</label>
+    </div>
+    <div class="card-box fade-in" id="fbCard">
+      <div class="card-tag" id="fbTag"></div>
+      <div class="word-meaning" id="fbMeaning" style="font-size:1.5rem"></div>
+      <div class="word-hint" id="fbHint"></div>
+      <div class="fill-row" style="margin-top:16px">
+        <input type="text" class="fill-input" id="fbInput" placeholder="输入英文单词..." autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn btn-primary" id="fbSubmitBtn">确认</button>
+      </div>
+      <div class="feedback" id="fbFeedback"></div>
+      <button class="btn btn-ghost" id="fbSkipBtn" style="margin-top:12px;font-size:.8rem">跳过 (显示答案)</button>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-ghost" id="fbResetBtn"> 重新开始</button>
+    </div>
+    <div class="kbd-hint">
+      按 <span class="kbd">Enter</span> 提交  <span class="kbd">Esc</span> 跳过
+    </div>
+  </div>
+
+  <!-- ====== Baicizhan Mode ====== -->
+  <div id="modeBaicizhan" style="display:none">
+    <div class="toggle-row" style="margin-bottom:10px">
+      <input type="checkbox" id="bzShuffle" checked><label for="bzShuffle">随机顺序</label>
+    </div>
+    <div class="card-box fade-in" id="bzCard">
+      <div class="card-tag" id="bzTag"></div>
+      <div class="word-big" id="bzWord" style="font-size:2.2rem"></div>
+      <div class="word-pos" id="bzPos"></div>
+      <div class="options-grid" id="bzOptions"></div>
+      <div class="feedback" id="bzFeedback"></div>
+      <div style="margin-top:12px">
+        <button class="btn btn-ghost" id="bzNextBtn" style="display:none">下一题 </button>
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-ghost" id="bzResetBtn"> 重新开始</button>
+    </div>
+    <div class="kbd-hint">
+      按 <span class="kbd">1-4</span> 选择答案
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== Global State ==========
+let allWords = [];
+let currentMode = 'flashcard';
+let currentUnit = 'all';
+
+// ========== Utilities ==========
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function getWords() {
+  return currentUnit === 'all' ? [...allWords] : allWords.filter(w => w.unit === currentUnit);
+}
+
+// ========== Embedded Data ==========
+const EMBEDDED_WORDS = [{"word":"fundamental","pos":"n.adj.","meaning_cn":"基本","unit":"1","meaning_en":"fundamental"},{"word":"manuscript","pos":"n.","meaning_cn":"手稿","unit":"1","meaning_en":"manuscript"},{"word":"format","pos":"n.","meaning_cn":"格式","unit":"1","meaning_en":"format"},{"word":"margin","pos":"n.","meaning_cn":"空白处","unit":"1","meaning_en":"margin"},{"word":"quotation","pos":"n.","meaning_cn":"引用","unit":"1","meaning_en":"quotation"},{"word":"proofread","pos":"v.","meaning_cn":"校对","unit":"1","meaning_en":"proofread"},{"word":"punctuation","pos":"n.","meaning_cn":"标点","unit":"1","meaning_en":"punctuation"},{"word":"excerpt","pos":"n.","meaning_cn":"节选","unit":"1","meaning_en":"excerpt"},{"word":"lucid","pos":"adj.","meaning_cn":"光滑的","unit":"1","meaning_en":"lucid"},{"word":"period","pos":"n.","meaning_cn":"句号","unit":"1","meaning_en":"period"},{"word":"exclamation","pos":"n.","meaning_cn":"感叹号","unit":"1","meaning_en":"exclamation"},{"word":"colon","pos":"n.","meaning_cn":"逗号","unit":"1","meaning_en":"colon"},{"word":"dash","pos":"n.","meaning_cn":"破折号","unit":"1","meaning_en":"dash"},{"word":"hyphen","pos":"n.","meaning_cn":"连字符","unit":"1","meaning_en":"hyphen"},{"word":"ellipse","pos":"n.","meaning_cn":"省略号","unit":"1","meaning_en":"ellipse"},{"word":"subordinate","pos":"adj.","meaning_cn":"附属的","unit":"1","meaning_en":"subordinate"},{"word":"marble","pos":"n.","meaning_cn":"大理石","unit":"1","meaning_en":"marble"},{"word":"attic","pos":"n.","meaning_cn":"阁楼","unit":"1","meaning_en":"attic"},{"word":"modifier","pos":"n.","meaning_cn":"修饰语","unit":"1","meaning_en":"modifier"},{"word":"prepositional","pos":"adj.","meaning_cn":"介词的","unit":"1","meaning_en":"prepositional"},{"word":"vegetarian","pos":"n.","meaning_cn":"素食者","unit":"1","meaning_en":"vegetarian"},{"word":"anesthesia","pos":"n.","meaning_cn":"麻醉","unit":"1","meaning_en":"anesthesia"},{"word":"autism","pos":"n.","meaning_cn":"自闭症","unit":"1","meaning_en":"autism"},{"word":"guitarist","pos":"n.","meaning_cn":"吉他手","unit":"1","meaning_en":"guitarist"},{"word":"ventilation","pos":"n.","meaning_cn":"呼吸机","unit":"1","meaning_en":"ventilation"},{"word":"overprescribe","pos":"v.","meaning_cn":"处方过量","unit":"1","meaning_en":"overprescribe"},{"word":"antibacterial","pos":"adj.","meaning_cn":"抗菌的","unit":"1","meaning_en":"antibacterial"},{"word":"capitalization","pos":"n.","meaning_cn":"大写","unit":"1","meaning_en":"capitalization"},{"word":"abbreviation","pos":"n.","meaning_cn":"缩写","unit":"1","meaning_en":"abbreviation"},{"word":"Initialism","pos":"n.","meaning_cn":"首字母缩略词","unit":"1","meaning_en":"Initialism"},{"word":"compound","pos":"n.","meaning_cn":"复合名词","unit":"1","meaning_en":"compound"},{"word":"Initial","pos":"n.","meaning_cn":"首字母","unit":"1","meaning_en":"Initial"},{"word":"infirmity","pos":"n.","meaning_cn":"体弱","unit":"1","meaning_en":"infirmity"},{"word":"establishment","pos":"n.","meaning_cn":"创立、机构","unit":"1","meaning_en":"establishment"},{"word":"acronym","pos":"n.","meaning_cn":"缩略语","unit":"1","meaning_en":"acronym"},{"word":"abbreviate","pos":"v.","meaning_cn":"缩写","unit":"1","meaning_en":"abbreviate"},{"word":"ambiguity","pos":null,"meaning_cn":"模糊","unit":"2","meaning_en":"ambiguity"},{"word":"monotony","pos":null,"meaning_cn":"单调","unit":"2","meaning_en":"monotony"},{"word":"fragment","pos":null,"meaning_cn":"片段","unit":"2","meaning_en":"fragment"},{"word":"come to terms with","pos":null,"meaning_cn":"达成协议","unit":"2","meaning_en":"come to terms with"},{"word":"maximize","pos":null,"meaning_cn":"最大化","unit":"2","meaning_en":"maximize"},{"word":"subordination","pos":null,"meaning_cn":"主从关系","unit":"2","meaning_en":"subordination"},{"word":"subordinate clause","pos":null,"meaning_cn":"从句，从属分句","unit":"2","meaning_en":"subordinate clause"},{"word":"coordination","pos":null,"meaning_cn":"并列关系","unit":"2","meaning_en":"coordination"},{"word":"coordinate clause","pos":null,"meaning_cn":"并列从句","unit":"2","meaning_en":"coordinate clause"},{"word":"appositive","pos":null,"meaning_cn":"同位语","unit":"2","meaning_en":"appositive"},{"word":"formality","pos":null,"meaning_cn":"正式程度","unit":"2","meaning_en":"formality"},{"word":"pretentious words","pos":null,"meaning_cn":"做作的词汇","unit":"2","meaning_en":"pretentious words"},{"word":"contraction","pos":null,"meaning_cn":"缩写形式","unit":"2","meaning_en":"contraction"},{"word":"slang","pos":null,"meaning_cn":"俚语","unit":"2","meaning_en":"slang"},{"word":"cliché","pos":null,"meaning_cn":"陈词滥调","unit":"2"},{"word":"idiom","pos":null,"meaning_cn":"习语","unit":"2","meaning_en":"idiom"},{"word":"vague","pos":null,"meaning_cn":"含糊的","unit":"2","meaning_en":"vague"},{"word":"variety","pos":null,"meaning_cn":"多样性","unit":"2","meaning_en":"variety"},{"word":"choppy sentence","pos":null,"meaning_cn":"不连贯的句子","unit":"2","meaning_en":"choppy sentence"},{"word":"simple sentence","pos":null,"meaning_cn":"简单句","unit":"2","meaning_en":"simple sentence"},{"word":"complex sentence","pos":null,"meaning_cn":"复合句","unit":"2","meaning_en":"complex sentence"},{"word":"compound sentence","pos":null,"meaning_cn":"并列句","unit":"2","meaning_en":"compound sentence"},{"word":"compound-complex sentence","pos":null,"meaning_cn":"并列-复合句","unit":"2","meaning_en":"compound-complex sentence"},{"word":"declarative sentence","pos":null,"meaning_cn":"陈述句","unit":"2","meaning_en":"declarative sentence"},{"word":"inverted sentence","pos":null,"meaning_cn":"倒装句","unit":"2","meaning_en":"inverted sentence"},{"word":"elliptical sentence","pos":null,"meaning_cn":"省略句","unit":"2","meaning_en":"elliptical sentence"},{"word":"comma splice","pos":null,"meaning_cn":"逗号粘连","unit":"2","meaning_en":"comma splice"},{"word":"dangling modifier","pos":null,"meaning_cn":"悬垂修饰语","unit":"2","meaning_en":"dangling modifier"},{"word":"sentence fragment","pos":null,"meaning_cn":"句子片段","unit":"2","meaning_en":"sentence fragment"},{"word":"parallelism","pos":null,"meaning_cn":"平行结构","unit":"2","meaning_en":"parallelism"},{"word":"correlative conjunction","pos":null,"meaning_cn":"关联连词","unit":"2","meaning_en":"correlative conjunction"},{"word":"echocardiogram","pos":null,"meaning_cn":"超声波心动图","unit":"2","meaning_en":"echocardiogram"},{"word":"lesion","pos":null,"meaning_cn":"损伤","unit":"2","meaning_en":"lesion"},{"word":"vegetarian","pos":null,"meaning_cn":"素食主义者","unit":"2","meaning_en":"vegetarian"},{"word":"dietitian","pos":null,"meaning_cn":"营养学家","unit":"2","meaning_en":"dietitian"},{"word":"paramedic","pos":null,"meaning_cn":"护理人员; 医务辅助人员","unit":"2","meaning_en":"paramedic"},{"word":"radiologist","pos":null,"meaning_cn":"放射科医生","unit":"2","meaning_en":"radiologist"},{"word":"compensate","pos":null,"meaning_cn":"补偿；弥补","unit":"2","meaning_en":"compensate"},{"word":"prescription","pos":null,"meaning_cn":"处方；药方","unit":"2","meaning_en":"prescription"},{"word":"cusp","pos":null,"meaning_cn":"尖头；窦","unit":"2","meaning_en":"cusp"},{"word":"analogous","pos":null,"meaning_cn":"相似的；类似的","unit":"3","meaning_en":"analogous"},{"word":"analytical","pos":null,"meaning_cn":"分析的","unit":"3","meaning_en":"analytical"},{"word":"antagonize","pos":null,"meaning_cn":"使……敌对；使……对抗","unit":"3","meaning_en":"antagonize"},{"word":"antonym","pos":null,"meaning_cn":"反义词","unit":"3","meaning_en":"antonym"},{"word":"chronic","pos":null,"meaning_cn":"慢性的；长期的","unit":"3","meaning_en":"chronic"},{"word":"classification","pos":null,"meaning_cn":"分类","unit":"3","meaning_en":"classification"},{"word":"cognitive","pos":null,"meaning_cn":"认知的","unit":"3","meaning_en":"cognitive"},{"word":"coherence","pos":null,"meaning_cn":"连贯性","unit":"3","meaning_en":"coherence"},{"word":"cohesion","pos":null,"meaning_cn":"黏连","unit":"3","meaning_en":"cohesion"},{"word":"colloquial","pos":null,"meaning_cn":"口语的","unit":"3","meaning_en":"colloquial"},{"word":"comprehend","pos":null,"meaning_cn":"理解","unit":"3","meaning_en":"comprehend"},{"word":"consistency","pos":null,"meaning_cn":"一致性","unit":"3","meaning_en":"consistency"},{"word":"controlling idea","pos":null,"meaning_cn":"主题思想","unit":"3","meaning_en":"controlling idea"},{"word":"elaborate on","pos":null,"meaning_cn":"详细说明","unit":"3","meaning_en":"elaborate on"},{"word":"excerpt","pos":null,"meaning_cn":"摘录；节选","unit":"3","meaning_en":"excerpt"},{"word":"exemplification","pos":null,"meaning_cn":"举例","unit":"3","meaning_en":"exemplification"},{"word":"flexible","pos":null,"meaning_cn":"灵活的","unit":"3","meaning_en":"flexible"},{"word":"generic word","pos":null,"meaning_cn":"通用词","unit":"3","meaning_en":"generic word"},{"word":"incubator","pos":null,"meaning_cn":"恒温箱；孵化器；细菌培养器","unit":"3","meaning_en":"incubator"},{"word":"inflammatory","pos":null,"meaning_cn":"煽动性的；发炎的；炎性的","unit":"3","meaning_en":"inflammatory"},{"word":"irrational","pos":null,"meaning_cn":"不理性的","unit":"3","meaning_en":"irrational"},{"word":"lengthy","pos":null,"meaning_cn":"很长的；漫长的；冗长的","unit":"3","meaning_en":"lengthy"},{"word":"logic","pos":null,"meaning_cn":"逻辑","unit":"3","meaning_en":"logic"},{"word":"mood","pos":null,"meaning_cn":"语气","unit":"3","meaning_en":"mood"},{"word":"morbidity","pos":null,"meaning_cn":"发病率；病态","unit":"3","meaning_en":"morbidity"},{"word":"mortality","pos":null,"meaning_cn":"死亡人数；必死性；死亡","unit":"3","meaning_en":"mortality"},{"word":"narration","pos":null,"meaning_cn":"叙述","unit":"3","meaning_en":"narration"},{"word":"neutral","pos":null,"meaning_cn":"中立的；中性的","unit":"3","meaning_en":"neutral"},{"word":"perish","pos":null,"meaning_cn":"死亡；毁灭","unit":"3","meaning_en":"perish"},{"word":"quiver","pos":null,"meaning_cn":"颤抖","unit":"3","meaning_en":"quiver"},{"word":"reference","pos":null,"meaning_cn":"所指","unit":"3","meaning_en":"reference"},{"word":"relevance","pos":null,"meaning_cn":"相关性","unit":"3","meaning_en":"relevance"},{"word":"supporting sentence","pos":null,"meaning_cn":"支持句","unit":"3","meaning_en":"supporting sentence"},{"word":"synonym","pos":null,"meaning_cn":"同义词","unit":"3","meaning_en":"synonym"},{"word":"tense","pos":null,"meaning_cn":"时态","unit":"3","meaning_en":"tense"},{"word":"tone","pos":null,"meaning_cn":"语气；口气；口吻","unit":"3","meaning_en":"tone"},{"word":"topic sentence","pos":null,"meaning_cn":"主题句","unit":"3","meaning_en":"topic sentence"},{"word":"transition","pos":null,"meaning_cn":"过渡手法","unit":"3","meaning_en":"transition"},{"word":"unity","pos":null,"meaning_cn":"统一性","unit":"3","meaning_en":"unity"},{"word":"voice","pos":null,"meaning_cn":"语态","unit":"3","meaning_en":"voice"},{"word":"address","pos":null,"meaning_cn":"地址","unit":"4-6","meaning_en":"address"},{"word":"postal service","pos":null,"meaning_cn":"邮政服务","unit":"4-6","meaning_en":"postal service"},{"word":"avenue","pos":null,"meaning_cn":"大街","unit":"4-6","meaning_en":"avenue"},{"word":"drive","pos":null,"meaning_cn":"大道","unit":"4-6","meaning_en":"drive"},{"word":"freeway","pos":null,"meaning_cn":"高速公路","unit":"4-6","meaning_en":"freeway"},{"word":"suite","pos":null,"meaning_cn":"套（房）","unit":"4-6","meaning_en":"suite"},{"word":"postal code","pos":null,"meaning_cn":"邮政编码","unit":"4-6","meaning_en":"postal code"},{"word":"station","pos":null,"meaning_cn":"（邮政）服务站","unit":"4-6","meaning_en":"station"},{"word":"delivery address","pos":null,"meaning_cn":"送达地址","unit":"4-6","meaning_en":"delivery address"},{"word":"inside address","pos":null,"meaning_cn":"信内地址","unit":"4-6","meaning_en":"inside address"},{"word":"signature","pos":null,"meaning_cn":"签名","unit":"4-6","meaning_en":"signature"},{"word":"postscript","pos":null,"meaning_cn":"附言","unit":"4-6","meaning_en":"postscript"},{"word":"envelope","pos":null,"meaning_cn":"信封","unit":"4-6","meaning_en":"envelope"},{"word":"addressee","pos":null,"meaning_cn":"收信人","unit":"4-6","meaning_en":"addressee"},{"word":"boulevard","pos":null,"meaning_cn":"大街","unit":"4-6","meaning_en":"boulevard"},{"word":"expressway","pos":null,"meaning_cn":"高速公路","unit":"4-6","meaning_en":"expressway"},{"word":"grove","pos":null,"meaning_cn":"路，街","unit":"4-6","meaning_en":"grove"},{"word":"ZIP","pos":null,"meaning_cn":"美国邮政编码","unit":"4-6","meaning_en":"ZIP"},{"word":"post Office","pos":null,"meaning_cn":"邮局","unit":"4-6","meaning_en":"post Office"},{"word":"return address","pos":null,"meaning_cn":"回信地址","unit":"4-6","meaning_en":"return address"},{"word":"heading","pos":null,"meaning_cn":"信头","unit":"4-6","meaning_en":"heading"},{"word":"salutation","pos":null,"meaning_cn":"称呼","unit":"4-6","meaning_en":"salutation"},{"word":"stationery","pos":null,"meaning_cn":"信纸","unit":"4-6","meaning_en":"stationery"},{"word":"enclosure","pos":null,"meaning_cn":"附件","unit":"4-6","meaning_en":"enclosure"},{"word":"application letter","pos":null,"meaning_cn":"应聘信","unit":"4-6","meaning_en":"application letter"},{"word":"prospective employer","pos":null,"meaning_cn":"潜在雇主，预期雇主","unit":"4-6","meaning_en":"prospective employer"},{"word":"interview","pos":null,"meaning_cn":"面试","unit":"4-6","meaning_en":"interview"},{"word":"qualification","pos":null,"meaning_cn":"资格，资历","unit":"4-6","meaning_en":"qualification"},{"word":"credentials","pos":null,"meaning_cn":"资格，资历","unit":"4-6","meaning_en":"credentials"},{"word":"vacancy","pos":null,"meaning_cn":"空缺","unit":"4-6","meaning_en":"vacancy"},{"word":"reference","pos":null,"meaning_cn":"推荐信","unit":"4-6","meaning_en":"reference"},{"word":"former employer","pos":null,"meaning_cn":"前雇主","unit":"4-6","meaning_en":"former employer"},{"word":"professionalism","pos":null,"meaning_cn":"职业精神/素养","unit":"4-6","meaning_en":"professionalism"},{"word":"candidate","pos":null,"meaning_cn":"候选人","unit":"4-6","meaning_en":"candidate"},{"word":"transcript","pos":null,"meaning_cn":"学生成绩报告单","unit":"4-6","meaning_en":"transcript"},{"word":"graduate with distinction","pos":null,"meaning_cn":"以优秀的成绩毕业","unit":"4-6","meaning_en":"graduate with distinction"},{"word":"professional aspiration","pos":null,"meaning_cn":"职业抱负","unit":"4-6","meaning_en":"professional aspiration"},{"word":"human resource manager","pos":null,"meaning_cn":"人力资源经理","unit":"4-6","meaning_en":"human resource manager"},{"word":"expertise","pos":null,"meaning_cn":"专业技能","unit":"4-6","meaning_en":"expertise"},{"word":"admission","pos":null,"meaning_cn":"入学","unit":"4-6","meaning_en":"admission"},{"word":"journal editor","pos":null,"meaning_cn":"杂志或期刊编辑","unit":"4-6","meaning_en":"journal editor"},{"word":"academia","pos":null,"meaning_cn":"学术界","unit":"4-6","meaning_en":"academia"},{"word":"cover letter","pos":null,"meaning_cn":"附信","unit":"4-6","meaning_en":"cover letter"},{"word":"manuscript submission","pos":null,"meaning_cn":"投稿","unit":"4-6","meaning_en":"manuscript submission"},{"word":"peer reviewer","pos":null,"meaning_cn":"同行审稿人，审稿专家","unit":"4-6","meaning_en":"peer reviewer"},{"word":"under consideration for publication","pos":null,"meaning_cn":"考虑发表","unit":"4-6","meaning_en":"under consideration for publication"},{"word":"original article","pos":null,"meaning_cn":"原创性论文","unit":"4-6","meaning_en":"original article"},{"word":"review article","pos":null,"meaning_cn":"综述","unit":"4-6","meaning_en":"review article"},{"word":"case report","pos":null,"meaning_cn":"病例报告","unit":"4-6","meaning_en":"case report"},{"word":"clinical report","pos":null,"meaning_cn":"临床报告","unit":"4-6","meaning_en":"clinical report"},{"word":"communication","pos":null,"meaning_cn":"通信","unit":"4-6","meaning_en":"communication"},{"word":"conflict of interest","pos":null,"meaning_cn":"利益冲突","unit":"4-6","meaning_en":"conflict of interest"},{"word":"dual submission","pos":null,"meaning_cn":"一稿两投","unit":"4-6","meaning_en":"dual submission"},{"word":"resubmission","pos":null,"meaning_cn":"重新投稿","unit":"4-6","meaning_en":"resubmission"},{"word":"symposium","pos":null,"meaning_cn":"研讨会","unit":"4-6","meaning_en":"symposium"},{"word":"colloquium","pos":null,"meaning_cn":"专题讨论会","unit":"4-6","meaning_en":"colloquium"},{"word":"editorial process","pos":null,"meaning_cn":"编辑流程","unit":"4-6","meaning_en":"editorial process"},{"word":"corresponding author","pos":null,"meaning_cn":"通讯作者","unit":"4-6","meaning_en":"corresponding author"},{"word":"affiliation","pos":null,"meaning_cn":"所属单位","unit":"4-6","meaning_en":"affiliation"},{"word":"mail address","pos":null,"meaning_cn":"邮件地址","unit":"4-6","meaning_en":"mail address"},{"word":"editor-in-chief","pos":null,"meaning_cn":"主编","unit":"4-6","meaning_en":"editor-in-chief"},{"word":"rationale","pos":null,"meaning_cn":"理论基础，根本原因，逻辑依据","unit":"4-6","meaning_en":"rationale"},{"word":"exclusion","pos":null,"meaning_cn":"排斥，排除在外","unit":"4-6","meaning_en":"exclusion"},{"word":"prior to","pos":null,"meaning_cn":"在---以前，先于，优先于","unit":"4-6","meaning_en":"prior to"},{"word":"execution","pos":null,"meaning_cn":"实行，履行，完成","unit":"4-6","meaning_en":"execution"},{"word":"outright","pos":null,"meaning_cn":"全部地，彻底地","unit":"4-6","meaning_en":"outright"},{"word":"reverse","pos":null,"meaning_cn":"反转，颠倒，倒转","unit":"4-6","meaning_en":"reverse"},{"word":"in the light of","pos":null,"meaning_cn":"鉴于，根据，参照","unit":"4-6","meaning_en":"in the light of"},{"word":"enclosed","pos":null,"meaning_cn":"随函附上的，附上的","unit":"4-6","meaning_en":"enclosed"},{"word":"append","pos":null,"meaning_cn":"附加，添加，增添","unit":"4-6","meaning_en":"append"},{"word":"de facto rejected","pos":null,"meaning_cn":"事实上被拒稿","unit":"4-6","meaning_en":"de facto rejected"},{"word":"reviewers’ comments","pos":null,"meaning_cn":"审稿意见","unit":"4-6"},{"word":"extension","pos":null,"meaning_cn":"延长，延期","unit":"4-6","meaning_en":"extension"},{"word":"point-by-point","pos":null,"meaning_cn":"点对点地，逐条地","unit":"4-6","meaning_en":"point-by-point"},{"word":"retrace","pos":null,"meaning_cn":"追溯","unit":"4-6","meaning_en":"retrace"},{"word":"bold type","pos":null,"meaning_cn":"粗体","unit":"4-6","meaning_en":"bold type"},{"word":"grievance","pos":null,"meaning_cn":"愤恨，怨气","unit":"4-6","meaning_en":"grievance"},{"word":"do a disservice","pos":null,"meaning_cn":"帮倒忙，对---造成伤害","unit":"4-6","meaning_en":"do a disservice"},{"word":"rules of thumb","pos":null,"meaning_cn":"经验法则","unit":"4-6","meaning_en":"rules of thumb"},{"word":"resume","pos":null,"meaning_cn":"简历","unit":"10-11","meaning_en":"resume"},{"word":"candidate","pos":null,"meaning_cn":"候选人","unit":"10-11","meaning_en":"candidate"},{"word":"showcase","pos":null,"meaning_cn":"陈列柜","unit":"10-11","meaning_en":"showcase"},{"word":"affiliation","pos":null,"meaning_cn":"隶属关系","unit":"10-11","meaning_en":"affiliation"},{"word":"overboard","pos":null,"meaning_cn":"从船上落下","unit":"10-11","meaning_en":"overboard"},{"word":"classified","pos":null,"meaning_cn":"保密的","unit":"10-11","meaning_en":"classified"},{"word":"utilize","pos":null,"meaning_cn":"利用","unit":"10-11","meaning_en":"utilize"},{"word":"pharmacist","pos":null,"meaning_cn":"药师","unit":"10-11","meaning_en":"pharmacist"},{"word":"executive","pos":null,"meaning_cn":"管理层；行政的","unit":"10-11","meaning_en":"executive"},{"word":"ambition","pos":null,"meaning_cn":"雄心","unit":"10-11","meaning_en":"ambition"},{"word":"neutral","pos":null,"meaning_cn":"中性的","unit":"10-11","meaning_en":"neutral"},{"word":"enroll in","pos":null,"meaning_cn":"等级，报名","unit":"10-11","meaning_en":"enroll in"},{"word":"chronological","pos":null,"meaning_cn":"时间顺序的","unit":"10-11","meaning_en":"chronological"},{"word":"stand out","pos":null,"meaning_cn":"脱颖而出","unit":"10-11","meaning_en":"stand out"},{"word":"hold accountable for","pos":null,"meaning_cn":"追究","unit":"10-11","meaning_en":"hold accountable for"},{"word":"attain","pos":null,"meaning_cn":"得到，达到","unit":"10-11","meaning_en":"attain"},{"word":"certification","pos":null,"meaning_cn":"证明，鉴定","unit":"10-11","meaning_en":"certification"},{"word":"integrate","pos":null,"meaning_cn":"整合，融入整体","unit":"10-11","meaning_en":"integrate"},{"word":"surpass","pos":null,"meaning_cn":"超越","unit":"10-11","meaning_en":"surpass"},{"word":"percentile","pos":null,"meaning_cn":"百分位","unit":"10-11","meaning_en":"percentile"},{"word":"supervise","pos":null,"meaning_cn":"指导","unit":"10-11","meaning_en":"supervise"},{"word":"periodical","pos":null,"meaning_cn":"杂志","unit":"10-11","meaning_en":"periodical"},{"word":"dedication","pos":null,"meaning_cn":"贡献","unit":"10-11","meaning_en":"dedication"},{"word":"reference","pos":null,"meaning_cn":"参考文献","unit":"10-11","meaning_en":"reference"},{"word":"advantageous","pos":null,"meaning_cn":"优势的","unit":"10-11","meaning_en":"advantageous"},{"word":"flexible","pos":null,"meaning_cn":"灵活的","unit":"10-11","meaning_en":"flexible"},{"word":"flexibility","pos":null,"meaning_cn":"灵活性","unit":"10-11","meaning_en":"flexibility"},{"word":"membership","pos":null,"meaning_cn":"会员资格","unit":"10-11","meaning_en":"membership"},{"word":"secure","pos":null,"meaning_cn":"保护；可靠的","unit":"10-11","meaning_en":"secure"},{"word":"qualification(","pos":null,"meaning_cn":"通过经验或具备技能而取得的)资格","unit":"10-11","meaning_en":"qualification("},{"word":"proofread","pos":null,"meaning_cn":"校对;勘校","unit":"10-11","meaning_en":"proofread"},{"word":"accopmlishment","pos":null,"meaning_cn":"成就","unit":"10-11","meaning_en":"accopmlishment"},{"word":"autobiography","pos":null,"meaning_cn":"自传","unit":"10-11","meaning_en":"autobiography"},{"word":"expertise","pos":null,"meaning_cn":"专业技能","unit":"10-11","meaning_en":"expertise"},{"word":"credibility","pos":null,"meaning_cn":"可靠性","unit":"10-11","meaning_en":"credibility"},{"word":"essential","pos":null,"meaning_cn":"基本的","unit":"10-11","meaning_en":"essential"},{"word":"modify","pos":null,"meaning_cn":"修饰","unit":"10-11","meaning_en":"modify"},{"word":"epidemiology","pos":null,"meaning_cn":"流行病学","unit":"10-11","meaning_en":"epidemiology"},{"word":"professionalism","pos":null,"meaning_cn":"职业精神","unit":"10-11","meaning_en":"professionalism"},{"word":"excellence","pos":null,"meaning_cn":"卓越","unit":"10-11","meaning_en":"excellence"},{"word":"profile","pos":null,"meaning_cn":"概述;形象;印象;","unit":"10-11","meaning_en":"profile"},{"word":"status","pos":null,"meaning_cn":"地位，身份","unit":"10-11","meaning_en":"status"},{"word":"manuscript style","pos":null,"meaning_en":"manuscript style","meaning_cn":"手稿体例","unit":"15-16"},{"word":"title","pos":null,"meaning_en":"title","meaning_cn":"标题","unit":"15-16"},{"word":"authorship","pos":null,"meaning_en":"authorship","meaning_cn":"作者","unit":"15-16"},{"word":"abstract","pos":null,"meaning_en":"abstract","meaning_cn":"摘要","unit":"15-16"},{"word":"key words","pos":null,"meaning_en":"key words","meaning_cn":"关键词","unit":"15-16"},{"word":"references","pos":null,"meaning_en":"references","meaning_cn":"参考文献","unit":"15-16"},{"word":"formatting guide","pos":null,"meaning_en":"formatting guide","meaning_cn":"格式指南","unit":"15-16"},{"word":"format style","pos":null,"meaning_en":"format style","meaning_cn":"格式体例","unit":"15-16"},{"word":"АМА","pos":null,"meaning_en":"АМА","meaning_cn":"美国医学会","unit":"15-16"},{"word":"JAMA","pos":null,"meaning_en":"JAMA","meaning_cn":"《美国医学会杂志》","unit":"15-16"},{"word":"APA","pos":null,"meaning_en":"APA","meaning_cn":"美国心理学协会","unit":"15-16"},{"word":"URM","pos":null,"meaning_en":"URM","meaning_cn":"生物医学期刊投稿统一要求","unit":"15-16"},{"word":"the International Committee of Medical Journal Editors","pos":null,"meaning_en":"the International Committee of Medical Journal Editors","meaning_cn":"国际医学期刊编辑委员会","unit":"15-16"},{"word":"The Lancet","pos":null,"meaning_en":"The Lancet","meaning_cn":"《柳叶刀》","unit":"15-16"},{"word":"New England Journal of Medicine","pos":null,"meaning_en":"New England Journal of Medicine","meaning_cn":"《新英格兰医学杂志》","unit":"15-16"},{"word":"title page","pos":null,"meaning_en":"title page","meaning_cn":"标题页","unit":"15-16"},{"word":"institutional affiliation","pos":null,"meaning_en":"institutional affiliation","meaning_cn":"任职机构","unit":"15-16"},{"word":"superscript","pos":null,"meaning_en":"superscript","meaning_cn":"上标","unit":"15-16"},{"word":"reprint request","pos":null,"meaning_en":"reprint request","meaning_cn":"重印请求","unit":"15-16"},{"word":"running head","pos":null,"meaning_en":"running head","meaning_cn":"页眉短标题","unit":"15-16"},{"word":"word count","pos":null,"meaning_en":"word count","meaning_cn":"字数统计","unit":"15-16"},{"word":"target journal","pos":null,"meaning_en":"target journal","meaning_cn":"目标期刊","unit":"15-16"},{"word":"index","pos":null,"meaning_en":"index","meaning_cn":"编制索引","unit":"17-20"},{"word":"database","pos":null,"meaning_en":"database","meaning_cn":"数据库","unit":"17-20"},{"word":"unstructured","pos":null,"meaning_en":"unstructured","meaning_cn":"非结构式的","unit":"17-20"},{"word":"structured","pos":null,"meaning_en":"structured","meaning_cn":"结构式的","unit":"17-20"},{"word":"heading","pos":null,"meaning_en":"heading","meaning_cn":"标题","unit":"17-20"},{"word":"SCIE","pos":null,"meaning_en":"SCIE","meaning_cn":"Science Citation Index Expanded（SCI-Expanded）科学引文索引扩展版","unit":"17-20"},{"word":"introduction","pos":null,"meaning_en":"introduction","meaning_cn":"引言","unit":"17-20"},{"word":"background","pos":null,"meaning_en":"background","meaning_cn":"背景","unit":"17-20"},{"word":"objective","pos":null,"meaning_en":"objective","meaning_cn":"目的","unit":"17-20"},{"word":"aim","pos":null,"meaning_en":"aim","meaning_cn":"目的","unit":"17-20"},{"word":"design","pos":null,"meaning_en":"design","meaning_cn":"设计","unit":"17-20"},{"word":"setting","pos":null,"meaning_en":"setting","meaning_cn":"研究场所","unit":"17-20"},{"word":"context","pos":null,"meaning_en":"context","meaning_cn":"背景","unit":"17-20"},{"word":"intervention","pos":null,"meaning_en":"intervention","meaning_cn":"干预","unit":"17-20"},{"word":"main outcome","pos":null,"meaning_en":"main outcome","meaning_cn":"主要结果","unit":"17-20"},{"word":"measure","pos":null,"meaning_en":"measure","meaning_cn":"措施","unit":"17-20"},{"word":"self-contained","pos":null,"meaning_en":"self-contained","meaning_cn":"独立的","unit":"17-20"},{"word":"Quality Scale","pos":null,"meaning_en":"Quality Scale","meaning_cn":"质量评分表","unit":"17-20"},{"word":"technical descriptor","pos":null,"meaning_en":"technical descriptor","meaning_cn":"技术描述符","unit":"17-20"},{"word":"subject","pos":null,"meaning_en":"subject","meaning_cn":"研究对象","unit":"17-20"},{"word":"demographic characteristics","pos":null,"meaning_en":"demographic characteristics","meaning_cn":"人口学特征","unit":"17-20"},{"word":"Variable","pos":null,"meaning_en":"Variable","meaning_cn":"变量","unit":"17-20"},{"word":"blinding","pos":null,"meaning_en":"blinding","meaning_cn":"盲法","unit":"17-20"},{"word":"nonblinding","pos":null,"meaning_en":"nonblinding","meaning_cn":"非盲法","unit":"17-20"},{"word":"numeric data","pos":null,"meaning_en":"numeric data","meaning_cn":"数字数据","unit":"17-20"},{"word":"meta-analysis","pos":null,"meaning_en":"meta-analysis","meaning_cn":"荟萃分析","unit":"17-20"},{"word":"statistic analysis","pos":null,"meaning_en":"statistic analysis","meaning_cn":"统计分析","unit":"17-20"},{"word":"systematic review","pos":null,"meaning_en":"systematic review","meaning_cn":"系统综述","unit":"17-20"},{"word":"randomized  controlled trial (RCT)","pos":null,"meaning_en":"randomized  controlled trial (RCT)","meaning_cn":"随机对照试验","unit":"17-20"},{"word":"a prospective study","pos":null,"meaning_en":"a prospective study","meaning_cn":"前瞻性研究","unit":"17-20"},{"word":"a non-interventional study","pos":null,"meaning_en":"a non-interventional study","meaning_cn":"非介入性研究","unit":"17-20"},{"word":"a single-center study","pos":null,"meaning_en":"a single-center study","meaning_cn":"单中心研究","unit":"17-20"},{"word":"a cohort study","pos":null,"meaning_en":"a cohort study","meaning_cn":"定群研究","unit":"17-20"},{"word":"a double-blinded study","pos":null,"meaning_en":"a double-blinded study","meaning_cn":"双盲研究","unit":"17-20"},{"word":"a single-arm study","pos":null,"meaning_en":"a single-arm study","meaning_cn":"单臂研究","unit":"17-20"},{"word":"a multicenter investigation","pos":null,"meaning_en":"a multicenter investigation","meaning_cn":"多中心调查","unit":"17-20"},{"word":"a retrospective study","pos":null,"meaning_en":"a retrospective study","meaning_cn":"回顾性研究","unit":"17-20"},{"word":"a case-control study","pos":null,"meaning_en":"a case-control study","meaning_cn":"病例对照研究","unit":"17-20"},{"word":"randomized samples","pos":null,"meaning_en":"randomized samples","meaning_cn":"随机样本","unit":"17-20"},{"word":"prospectively collected registry","pos":null,"meaning_en":"prospectively collected registry","meaning_cn":"前瞻性收集数据的注册研究","unit":"17-20"},{"word":"an exploratory study","pos":null,"meaning_en":"an exploratory study","meaning_cn":"探索性研究","unit":"17-20"},{"word":"a convenience sample","pos":null,"meaning_en":"a convenience sample","meaning_cn":"方便样本","unit":"17-20"},{"word":"a standardized questionnaire","pos":null,"meaning_en":"a standardized questionnaire","meaning_cn":"标准化问卷","unit":"17-20"},{"word":"a semistructured interview","pos":null,"meaning_en":"a semistructured interview","meaning_cn":"半结构访谈","unit":"17-20"},{"word":"eligible patients","pos":null,"meaning_en":"eligible patients","meaning_cn":"合格病人","unit":"17-20"},{"word":"hospital admission","pos":null,"meaning_en":"hospital admission","meaning_cn":"入院","unit":"17-20"},{"word":"follow-up","pos":null,"meaning_en":"follow-up","meaning_cn":"跟踪","unit":"17-20"},{"word":"parameter","pos":null,"meaning_en":"parameter","meaning_cn":"参数","unit":"17-20"},{"word":"categorical data","pos":null,"meaning_en":"categorical data","meaning_cn":"分类数据","unit":"17-20"},{"word":"chi-square tests","pos":null,"meaning_en":"chi-square tests","meaning_cn":"卡方检验","unit":"17-20"},{"word":"univariate analysis","pos":null,"meaning_en":"univariate analysis","meaning_cn":"单变量分析，一元分析","unit":"17-20"},{"word":"multiple logistic regression","pos":null,"meaning_en":"multiple logistic regression","meaning_cn":"多元回归分析","unit":"17-20"},{"word":"unpaired t-test","pos":null,"meaning_en":"unpaired t-test","meaning_cn":"非成对 t 检验","unit":"17-20"},{"word":"parametric data","pos":null,"meaning_en":"parametric data","meaning_cn":"参数数据","unit":"17-20"}];
+
+// ========== Init ==========
+function initApp() {
+  allWords = EMBEDDED_WORDS;
+  document.getElementById('subtitle').textContent = '医学英语词汇训练 · ' + allWords.length + ' 词条';
+
+  const units = [...new Set(allWords.map(w => w.unit).filter(Boolean))];
+  units.sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0));
+  const sel = document.getElementById('unitSelect');
+  units.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u; opt.textContent = 'Unit ' + u;
+    sel.appendChild(opt);
+  });
+
+  initFlashcard();
+}
+
+// ========== Flashcard ==========
+let fc = { queue: [], idx: 0, known: 0, flipped: false };
+
+function restoreFcCard() {
+  document.getElementById('fcCard').innerHTML = `
+    <div class="card-tag" id="fcTag"></div>
+    <div class="word-big" id="fcWord"></div>
+    <div class="word-pos" id="fcPos"></div>
+    <div class="word-meaning" id="fcMeaning"></div>
+    <div class="word-hint" id="fcHint">点击卡片翻转</div>`;
+}
+
+function initFlashcard() {
+  restoreFcCard();
+  const card = document.getElementById('fcCard');
+  fc.queue = shuffle(getWords());
+  fc.idx = 0; fc.known = 0; fc.flipped = false;
+  document.getElementById('fcMeaning').style.display = 'none';
+  document.getElementById('fcPos').style.display = 'none';
+  document.getElementById('fcActions').style.display = 'none';
+  document.getElementById('fcHint').style.display = 'block';
+  card.classList.remove('shake');
+  card.style.cursor = 'pointer';
+  card.onclick = flipCard;
+  updateStats();
+  showFcCard();
+}
+
+function showFcCard() {
+  const el = (id) => document.getElementById(id);
+  if (fc.idx >= fc.queue.length) {
+    el('fcWord').textContent = '';
+    el('fcTag').textContent = '';
+    el('fcMeaning').textContent = '';
+    el('fcMeaning').style.display = 'none';
+    el('fcPos').style.display = 'none';
+    el('fcHint').style.display = 'none';
+    el('fcActions').style.display = 'none';
+    el('fcCard').style.cursor = 'default';
+    el('fcCard').onclick = null;
+    el('fcCard').innerHTML = `<div class="done-icon">&#127881;</div><div class="word-big">本轮完成!</div><div class="word-meaning" style="display:block">认识 ${fc.known} / ${fc.queue.length} 个单词</div>`;
+    return;
+  }
+  const w = fc.queue[fc.idx];
+  el('fcTag').textContent = w.unit ? 'Unit ' + w.unit : '';
+  el('fcWord').textContent = w.word;
+  el('fcMeaning').textContent = w.meaning_cn || '';
+  el('fcMeaning').style.display = 'none';
+  el('fcPos').textContent = w.pos || '';
+  el('fcPos').style.display = 'none';
+  el('fcHint').style.display = 'block';
+  el('fcHint').textContent = '点击卡片翻转';
+  el('fcActions').style.display = 'none';
+  fc.flipped = false;
+  el('fcCard').style.cursor = 'pointer';
+  el('fcCard').onclick = flipCard;
+  el('fcCard').classList.remove('shake', 'pop');
+  el('fcCard').classList.add('fade-in');
+  setTimeout(() => el('fcCard').classList.remove('fade-in'), 350);
+}
+
+function flipCard() {
+  if (fc.flipped || fc.idx >= fc.queue.length) return;
+  fc.flipped = true;
+  document.getElementById('fcMeaning').style.display = 'block';
+  const pos = document.getElementById('fcPos');
+  if (pos.textContent) pos.style.display = 'block';
+  document.getElementById('fcHint').style.display = 'none';
+  document.getElementById('fcActions').style.display = 'flex';
+  document.getElementById('fcCard').classList.add('pop');
+  setTimeout(() => document.getElementById('fcCard').classList.remove('pop'), 300);
+}
+
+function fcAnswer(known) {
+  if (!fc.flipped) return;
+  if (known) fc.known++;
+  fc.idx++;
+  updateStats();
+  showFcCard();
+}
+
+// ========== Fill-in-Blank ==========
+let fb = { queue: [], idx: 0, correct: 0, answered: false, timer: null };
+
+function initFillblank() {
+  fb.queue = shuffle(getWords());
+  fb.idx = 0; fb.correct = 0; fb.answered = false;
+  clearTimeout(fb.timer);
+  restoreFbCard();
+  updateStats();
+  showFbCard();
+  document.getElementById('fbInput').focus();
+}
+
+function restoreFbCard() {
+  const card = document.getElementById('fbCard');
+  card.innerHTML = `
+    <div class="card-tag" id="fbTag"></div>
+    <div class="word-meaning" id="fbMeaning" style="font-size:1.5rem"></div>
+    <div class="word-hint" id="fbHint"></div>
+    <div class="fill-row" style="margin-top:16px">
+      <input type="text" class="fill-input" id="fbInput" placeholder="输入英文单词..." autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="btn btn-primary" id="fbSubmitBtn">确认</button>
+    </div>
+    <div class="feedback" id="fbFeedback"></div>
+    <button class="btn btn-ghost" id="fbSkipBtn" style="margin-top:12px;font-size:.8rem">跳过 (显示答案)</button>`;
+  // Re-bind events
+  document.getElementById('fbSubmitBtn').onclick = fbSubmit;
+  document.getElementById('fbSkipBtn').onclick = fbSkip;
+  document.getElementById('fbInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); fbSubmit(); }
+  });
+}
+
+function showFbCard() {
+  clearTimeout(fb.timer);
+  if (fb.idx >= fb.queue.length) {
+    const card = document.getElementById('fbCard');
+    card.innerHTML = `<div class="done-icon">&#127881;</div><div class="word-big">本轮完成!</div><div class="word-meaning" style="display:block">正确 ${fb.correct} / ${fb.queue.length}</div>`;
+    return;
+  }
+  fb.answered = false;
+  const w = fb.queue[fb.idx];
+  document.getElementById('fbTag').textContent = w.unit ? 'Unit ' + w.unit : '';
+  document.getElementById('fbMeaning').textContent = w.meaning_cn || '';
+  const first = w.word.charAt(0);
+  const len = w.word.length;
+  const words = w.word.includes(' ') ? ` · ${w.word.split(' ').length} 个词` : '';
+  document.getElementById('fbHint').textContent = `首字母: ${first} · ${len} 个字符${words}`;
+  const inp = document.getElementById('fbInput');
+  inp.value = ''; inp.className = 'fill-input'; inp.disabled = false; inp.focus();
+  document.getElementById('fbFeedback').textContent = '';
+  document.getElementById('fbFeedback').className = 'feedback';
+  document.getElementById('fbSubmitBtn').textContent = '确认';
+  document.getElementById('fbSubmitBtn').onclick = fbSubmit;
+  document.getElementById('fbSkipBtn').style.display = 'inline-block';
+}
+
+function fbSubmit() {
+  if (fb.idx >= fb.queue.length) return;
+  if (fb.answered) { fbNext(); return; }
+  fb.answered = true;
+  const w = fb.queue[fb.idx];
+  const input = document.getElementById('fbInput').value.trim().toLowerCase();
+  const answer = w.word.toLowerCase();
+  const inp = document.getElementById('fbInput');
+  const fbEl = document.getElementById('fbFeedback');
+  inp.disabled = true;
+
+  if (input === answer) {
+    inp.className = 'fill-input correct';
+    fbEl.textContent = '✅ 正确!';
+    fbEl.className = 'feedback ok';
+    fb.correct++;
+  } else {
+    inp.className = 'fill-input wrong';
+    fbEl.innerHTML = '❌ 错误! 正确答案: <strong>' + w.word + '</strong>';
+    fbEl.className = 'feedback bad';
+  }
+  document.getElementById('fbSubmitBtn').textContent = '下一题';
+  document.getElementById('fbSubmitBtn').onclick = fbNext;
+  document.getElementById('fbSkipBtn').style.display = 'none';
+  updateStats();
+  fb.timer = setTimeout(() => { if (fb.answered) fbNext(); }, 1800);
+}
+
+function fbSkip() {
+  if (fb.answered || fb.idx >= fb.queue.length) return;
+  fb.answered = true;
+  clearTimeout(fb.timer);
+  const w = fb.queue[fb.idx];
+  document.getElementById('fbInput').className = 'fill-input wrong';
+  document.getElementById('fbInput').disabled = true;
+  document.getElementById('fbFeedback').innerHTML = '答案: <strong>' + w.word + '</strong>';
+  document.getElementById('fbFeedback').className = 'feedback bad';
+  document.getElementById('fbSubmitBtn').textContent = '下一题';
+  document.getElementById('fbSubmitBtn').onclick = fbNext;
+  document.getElementById('fbSkipBtn').style.display = 'none';
+  fb.timer = setTimeout(() => { if (fb.answered) fbNext(); }, 2000);
+}
+
+function fbNext() {
+  clearTimeout(fb.timer);
+  if (fb.idx >= fb.queue.length) return;
+  fb.idx++;
+  updateStats();
+  showFbCard();
+}
+
+// ========== Baicizhan ==========
+let bz = { queue: [], idx: 0, correct: 0, answered: false, streak: 0 };
+
+function initBaicizhan() {
+  bz.queue = shuffle(getWords());
+  bz.idx = 0; bz.correct = 0; bz.answered = false; bz.streak = 0;
+  restoreBzCard();
+  updateStats();
+  showBzCard();
+}
+
+function restoreBzCard() {
+  const card = document.getElementById('bzCard');
+  card.innerHTML = `
+    <div class="card-tag" id="bzTag"></div>
+    <div class="word-big" id="bzWord" style="font-size:2.2rem"></div>
+    <div class="word-pos" id="bzPos"></div>
+    <div class="options-grid" id="bzOptions"></div>
+    <div class="feedback" id="bzFeedback"></div>
+    <div style="margin-top:12px">
+      <button class="btn btn-ghost" id="bzNextBtn" style="display:none">下一题 </button>
+    </div>`;
+  document.getElementById('bzNextBtn').onclick = bzNext;
+}
+
+function showBzCard() {
+  if (bz.idx >= bz.queue.length) {
+    const card = document.getElementById('bzCard');
+    card.innerHTML = `<div class="done-icon">&#127881;</div><div class="word-big">本轮完成!</div><div class="word-meaning" style="display:block">正确 ${bz.correct} / ${bz.queue.length}</div>`;
+    document.getElementById('bzNextBtn') && (document.getElementById('bzNextBtn').style.display = 'none');
+    return;
+  }
+  bz.answered = false;
+  const w = bz.queue[bz.idx];
+  document.getElementById('bzTag').textContent = w.unit ? 'Unit ' + w.unit : '';
+  document.getElementById('bzWord').textContent = w.word;
+  document.getElementById('bzPos').textContent = w.pos || '';
+  const fbEl = document.getElementById('bzFeedback');
+  fbEl.textContent = ''; fbEl.className = 'feedback';
+  const nextBtn = document.getElementById('bzNextBtn');
+  if (nextBtn) nextBtn.style.display = 'none';
+
+  // Build 4 options: 1 correct + 3 distractors
+  const pool = currentUnit === 'all' ? allWords : allWords.filter(x => x.unit === currentUnit);
+  const used = new Set([w.meaning_cn]);
+  const distractors = [];
+  const candidates = shuffle([...pool].filter(x => x.word !== w.word && !used.has(x.meaning_cn)));
+  for (const d of candidates) {
+    if (distractors.length >= 3) break;
+    if (!used.has(d.meaning_cn)) { distractors.push(d); used.add(d.meaning_cn); }
+  }
+  // If not enough from unit, pull from global
+  if (distractors.length < 3) {
+    const global = shuffle([...allWords].filter(x => x.word !== w.word && !used.has(x.meaning_cn)));
+    for (const d of global) {
+      if (distractors.length >= 3) break;
+      if (!used.has(d.meaning_cn)) { distractors.push(d); used.add(d.meaning_cn); }
+    }
+  }
+  // Pad if still short
+  while (distractors.length < 3) distractors.push({ meaning_cn: '---', word: '' });
+
+  const correctIdx = Math.floor(Math.random() * 4);
+  const options = [];
+  for (let i = 0; i < 4; i++) {
+    if (i === correctIdx) options.push({ meaning: w.meaning_cn, correct: true });
+    else options.push({ meaning: distractors.shift().meaning_cn, correct: false });
+  }
+
+  const grid = document.getElementById('bzOptions');
+  grid.innerHTML = '';
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt.meaning;
+    btn.onclick = () => bzSelect(i, opt);
+    btn.dataset.idx = i;
+    grid.appendChild(btn);
+  });
+}
+
+function bzSelect(idx, opt) {
+  if (bz.answered) return;
+  bz.answered = true;
+  const w = bz.queue[bz.idx];
+  const buttons = document.querySelectorAll('#bzOptions .option-btn');
+  const fbEl = document.getElementById('bzFeedback');
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (btn.textContent === w.meaning_cn) btn.classList.add('correct');
+    else if (i === idx && !opt.correct) btn.classList.add('wrong');
+  });
+
+  if (opt.correct) {
+    bz.correct++; bz.streak++;
+    fbEl.textContent = '✅ 正确!';
+    fbEl.className = 'feedback ok';
+  } else {
+    bz.streak = 0;
+    fbEl.textContent = '❌ 错误! 正确答案: ' + w.meaning_cn;
+    fbEl.className = 'feedback bad';
+  }
+  updateStats();
+  const nextBtn = document.getElementById('bzNextBtn');
+  if (nextBtn) { nextBtn.style.display = 'inline-block'; nextBtn.focus(); }
+}
+
+function bzNext() {
+  if (bz.idx >= bz.queue.length) return;
+  bz.idx++; updateStats(); showBzCard();
+}
+
+// ========== Stats ==========
+function updateStats() {
+  const el = (id) => document.getElementById(id);
+  let total, correct, streak, attempted;
+  if (currentMode === 'flashcard') { total = fc.queue.length; correct = fc.known; streak = 0; attempted = fc.idx; }
+  else if (currentMode === 'fillblank') { total = fb.queue.length; correct = fb.correct; streak = 0; attempted = fb.idx; }
+  else { total = bz.queue.length; correct = bz.correct; streak = bz.streak; attempted = bz.idx; }
+  el('statTotal').textContent = total;
+  el('statCorrect').textContent = correct;
+  el('statStreak').textContent = streak;
+  el('statAccuracy').textContent = attempted > 0 ? Math.round((correct / attempted) * 100) + '%' : '-';
+}
+
+// ========== Mode Switching ==========
+function switchMode(mode) {
+  clearTimeout(fb.timer);
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+  document.getElementById('modeFlashcard').style.display = mode === 'flashcard' ? 'block' : 'none';
+  document.getElementById('modeFillblank').style.display = mode === 'fillblank' ? 'block' : 'none';
+  document.getElementById('modeBaicizhan').style.display = mode === 'baicizhan' ? 'block' : 'none';
+  if (mode === 'flashcard') initFlashcard();
+  else if (mode === 'fillblank') initFillblank();
+  else initBaicizhan();
+}
+
+// ========== Event Bindings ==========
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => switchMode(t.dataset.mode));
+});
+document.getElementById('unitSelect').addEventListener('change', (e) => {
+  currentUnit = e.target.value;
+  switchMode(currentMode);
+});
+document.getElementById('fcShuffle').addEventListener('change', () => initFlashcard());
+document.getElementById('fbShuffle').addEventListener('change', () => initFillblank());
+document.getElementById('bzShuffle').addEventListener('change', () => initBaicizhan());
+
+document.getElementById('fcCard').addEventListener('click', flipCard);
+document.getElementById('fcBtnNo').addEventListener('click', () => fcAnswer(false));
+document.getElementById('fcBtnYes').addEventListener('click', () => fcAnswer(true));
+document.getElementById('fcResetBtn').addEventListener('click', () => initFlashcard());
+
+document.getElementById('fbSubmitBtn').addEventListener('click', fbSubmit);
+document.getElementById('fbSkipBtn').addEventListener('click', fbSkip);
+document.getElementById('fbResetBtn').addEventListener('click', () => initFillblank());
+document.getElementById('fbInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); fbSubmit(); }
+});
+
+document.getElementById('bzResetBtn').addEventListener('click', () => initBaicizhan());
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') {
+    if (e.key === 'Escape' && currentMode === 'fillblank') { e.preventDefault(); fbSkip(); }
+    return;
+  }
+  if (currentMode === 'flashcard' && fc.idx < fc.queue.length) {
+    if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); flipCard(); }
+    if (e.key === 'ArrowLeft' && fc.flipped) { e.preventDefault(); fcAnswer(false); }
+    if (e.key === 'ArrowRight' && fc.flipped) { e.preventDefault(); fcAnswer(true); }
+  }
+  if (currentMode === 'baicizhan') {
+    if (!bz.answered && e.key >= '1' && e.key <= '4') {
+      e.preventDefault();
+      const buttons = document.querySelectorAll('#bzOptions .option-btn');
+      if (buttons[e.key - 1]) buttons[e.key - 1].click();
+    }
+    if (bz.answered && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight')) {
+      e.preventDefault(); bzNext();
+    }
+  }
+});
+
+// ========== Bootstrap ==========
+window.addEventListener('DOMContentLoaded', initApp);
+
+</script>
+</body>
+</html>
